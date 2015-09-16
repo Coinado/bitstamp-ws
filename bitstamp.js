@@ -22,6 +22,7 @@ var Bitstamp = function(opts) {
   });
 
   this.client.on('connect', this.subscribe);
+  this.client.on('disconnect', this.reconnect);
   this.client.connect();
 }
 
@@ -40,6 +41,13 @@ Bitstamp.prototype.subscribe = function() {
     this.client.subscribe('diff_order_book').on('data', this.handleDiffOrderBook);
   }
 };
+
+Bitstamp.prototype.reconnect = function(e) {
+  var self = this;
+  setTimeout(function() {
+    self.client.connect();
+  }, 1000);
+}
 
 Bitstamp.prototype.handleTrade = function(e) {
   this.emit('trade', e);
